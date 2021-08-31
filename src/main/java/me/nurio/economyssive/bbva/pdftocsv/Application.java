@@ -1,7 +1,9 @@
 package me.nurio.economyssive.bbva.pdftocsv;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -21,20 +23,18 @@ public class Application {
             }
         }
 
-        List<String> convert = convert(args[0]);
+        // Prepare stream and call the BBVA PDF to CSV processor.
+        File pdfFile = new File(args[0]);
+        InputStream inputStream = new FileInputStream(pdfFile);
+        List<String> csvLines = BbvaPdfToCsv.process(inputStream);
+
+        // Print lines in terminal
+        csvLines.forEach(System.out::println);
 
         if (args.length == 2) {
             File destination = new File(args[1]);
-            Files.writeString(destination.toPath(), String.join("\n", convert));
+            Files.writeString(destination.toPath(), String.join("\n", csvLines));
         }
-    }
-
-    private static List<String> convert(String sourcePath) throws IOException {
-        File file = new File(sourcePath);
-        String s = PdfToText.read(file);
-        List<String> convert = TextToCsv.convert(s);
-        convert.forEach(System.out::println);
-        return convert;
     }
 
 }
