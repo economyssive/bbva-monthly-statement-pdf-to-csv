@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class TextToCsv {
 
-    static final String regex = "(\\d{2}[\\/]\\d{2})[ ](\\d{2}[\\/]\\d{2})[ ](.*)\r\n(.*)\r\n([\\-0-9,]+)[ ]([0-9,]+)";
+    static final String regex = "(\\d{2}[\\/]\\d{2})[ ](\\d{2}[\\/]\\d{2})[ ](.*)\r?\n(.*)\r?\n([\\-0-9,]+)[ ]([0-9,]+)";
     static final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
 
     public static List<String> convert(String source) {
