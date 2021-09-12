@@ -17,11 +17,14 @@ public class TextToCsv {
         // Add the CSV headers
         lines.add("OPERATION DATE|VALUE DATE|OPERATION TYPE|DESCRIPTION|AMOUNT|BALANCE");
 
+        // Find report year at the page headers
+        String year = findYear(source);
+
         // Add all the transactions line per line
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
-            String operationDate = matcher.group(1);
-            String valueDate = matcher.group(2);
+            String operationDate = applyYear(matcher.group(1), year);
+            String valueDate = applyYear(matcher.group(2), year);
             String operationType = matcher.group(3);
             String description = matcher.group(4).toUpperCase(Locale.ROOT);
             String amount = matcher.group(5).replaceAll(",", ".");
@@ -40,6 +43,22 @@ public class TextToCsv {
         }
 
         return lines;
+    }
+
+    private static String findYear(String source) {
+        final String regex = "EXTRACTO DE \\w+ (\\d{4})";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(source);
+
+        if (!matcher.find()) {
+            return "1971"; // Unknown date
+        }
+
+        return matcher.group(1);
+    }
+
+    private static String applyYear(String date, String year) {
+        return date + "/" + year;
     }
 
 }
